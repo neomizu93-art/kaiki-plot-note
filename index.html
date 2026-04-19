@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="怪異プロット" />
+  <title>怪異プロットノート</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg2: #121a31;
+      --card: rgba(255,255,255,0.08);
+      --card-border: rgba(255,255,255,0.12);
+      --text: #eef2ff;
+      --muted: #b5bfdc;
+      --accent: #8b9bff;
+      --accent-2: #6e7ef0;
+      --danger: #e86d7a;
+      --success: #76d0a3;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; background: linear-gradient(180deg, #070b16, #0b1020 30%, #121a31); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic UI",sans-serif; }
+    body { min-height:100vh; }
+    .app { max-width: 860px; margin: 0 auto; padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)); }
+    .topbar { display:flex; justify-content:space-between; align-items:flex-start; gap: 12px; margin-bottom: 18px; }
+    .title h1 { margin:0; font-size: 1.7rem; letter-spacing:.02em; }
+    .title p { margin:8px 0 0; color:var(--muted); font-size:.96rem; }
+    .btn {
+      border:none; border-radius: 14px; padding: 12px 16px; font-size: .98rem; font-weight: 700; cursor:pointer;
+      color:white; background: linear-gradient(180deg, var(--accent), var(--accent-2)); box-shadow: 0 8px 22px rgba(139,155,255,.35);
+    }
+    .btn.secondary { background: rgba(255,255,255,.08); color: var(--text); box-shadow:none; border:1px solid rgba(255,255,255,.14); }
+    .btn.danger { background: linear-gradient(180deg, #f08f98, var(--danger)); box-shadow:none; }
+    .home, .editor { display:none; }
+    .active { display:block; }
+    .empty {
+      background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); color: var(--muted);
+    }
+    .list { display:grid; gap: 12px; }
+    .card {
+      background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); cursor:pointer;
+      backdrop-filter: blur(10px);
+    }
+    .card-head { display:flex; justify-content:space-between; gap:10px; align-items:center; }
+    .ep { font-size:.9rem; color: var(--accent); font-weight: 700; }
+    .status { font-size:.78rem; padding: 5px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.14); color: var(--muted); }
+    .status.done { color:#0b2016; background: var(--success); border-color: transparent; font-weight:700; }
+    .card h3 { margin: 10px 0 8px; font-size: 1.08rem; }
+    .preview { color:var(--muted); line-height:1.5; white-space: pre-wrap; }
+    .editor-card {
+      background: var(--card); border:1px solid var(--card-border); border-radius: 22px; padding: 16px; box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .editor-top { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 10px; }
+    .editor-top h2 { margin:0; font-size: 1.2rem; }
+    .toolbar { display:flex; gap:8px; flex-wrap:wrap; }
+    .grid { display:grid; gap: 14px; }
+    .two { grid-template-columns: 1fr 1fr; }
+    label { display:block; font-size:.92rem; color:var(--muted); margin-bottom: 6px; }
+    input[type="text"], input[type="number"], select, textarea {
+      width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.12); background: rgba(9,13,25,.72); color: var(--text); padding: 13px 14px; font-size: 16px;
+      outline: none;
+    }
+    textarea { min-height: 110px; resize: vertical; line-height: 1.55; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139,155,255,.18); }
+    .section-title { margin: 20px 0 10px; font-size: .95rem; color: #cdd5f6; letter-spacing: .03em; }
+    .checkrow { display:flex; align-items:center; gap:10px; padding: 12px 0 4px; }
+    .checkrow input { width: 20px; height: 20px; }
+    .hint { color: var(--muted); font-size: .84rem; margin-top: 12px; line-height: 1.55; }
+    .install-tip { margin-top: 14px; color: var(--muted); font-size: .84rem; line-height:1.55; }
+    .footer-space { height: 14px; }
+    @media (max-width: 680px) {
+      .topbar, .editor-top { flex-direction: column; align-items: stretch; }
+      .two { grid-template-columns: 1fr; }
+      .toolbar { width:100%; }
+      .toolbar .btn { flex:1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section id="homeView" class="home active">
+      <div class="topbar">
+        <div class="title">
+          <h1>怪異プロットノート</h1>
+          <p>各話のプロットを、項目ごとに整理して保存するためのシンプルなWebアプリ</p>
+          <div class="install-tip">Safariで公開URLを開いた状態なら、共有 →「ホーム画面に追加」で置きやすい構成です。</div>
+        </div>
+        <button id="newBtn" class="btn">＋ 新規作成</button>
+      </div>
+      <div id="episodeList" class="list"></div>
+      <div id="emptyState" class="empty" style="display:none;">
+        まだエピソードがありません。<br>右上の「＋ 新規作成」から最初の1話を作れます。
+      </div>
+    </section>
+
+    <section id="editorView" class="editor">
+      <div class="editor-card">
+        <div class="editor-top">
+          <h2 id="editorTitle">新規エピソード</h2>
+          <div class="toolbar">
+            <button id="backBtn" class="btn secondary">一覧へ戻る</button>
+            <button id="saveBtn" class="btn">保存</button>
+            <button id="deleteBtn" class="btn danger">削除</button>
+          </div>
+        </div>
+
+        <div class="section-title">基本情報</div>
+        <div class="grid two">
+          <div>
+            <label for="episode">話数</label>
+            <input id="episode" type="number" inputmode="numeric" min="1" placeholder="例：1" />
+          </div>
+          <div>
+            <label for="title">タイトル</label>
+            <input id="title" type="text" placeholder="例：第1話「水眠」" />
+          </div>
+        </div>
+
+        <div class="section-title">ストーリー設計</div>
+        <div class="grid">
+          <div>
+            <label for="setting">基本舞台</label>
+            <textarea id="setting" placeholder="どこで起きる話か"></textarea>
+          </div>
+          <div>
+            <label for="incident">起きる異変</label>
+            <textarea id="incident" placeholder="何が起きるか"></textarea>
+          </div>
+          <div>
+            <label for="monster">怪異の正体</label>
+            <textarea id="monster" placeholder="怪異の真相・正体・裏設定"></textarea>
+          </div>
+          <div>
+            <label for="characters">登場人物</label>
+            <textarea id="characters" placeholder="主人公、脇役、怪異に関わる人物など"></textarea>
+          </div>
+        </div>
+
+        <div class="section-title">展開・結末</div>
+        <div class="grid two">
+          <div>
+            <label for="status">主人公の安否</label>
+            <select id="status">
+              <option value="">選択してください</option>
+              <option value="無事">無事</option>
+              <option value="たぶん無事">たぶん無事</option>
+              <option value="不明">不明</option>
+              <option value="死亡">死亡</option>
+            </select>
+          </div>
+          <div>
+            <label for="ending">結末の見せ方</label>
+            <select id="ending">
+              <option value="">選択してください</option>
+              <option value="明示">明示</option>
+              <option value="ぼかす">ぼかす</option>
+              <option value="視聴者に委ねる">視聴者に委ねる</option>
+            </select>
+          </div>
+          <div>
+            <label for="aftertaste">後味</label>
+            <select id="aftertaste">
+              <option value="">選択してください</option>
+              <option value="不安">不安</option>
+              <option value="恐怖">恐怖</option>
+              <option value="美しさ">美しさ</option>
+              <option value="安堵">安堵</option>
+              <option value="疑問">疑問</option>
+              <option value="余韻">余韻</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">補助</div>
+        <div class="grid">
+          <div>
+            <label for="memo">メモ</label>
+            <textarea id="memo" placeholder="自由メモ、未確定要素、後で直したいこと"></textarea>
+          </div>
+        </div>
+
+        <div class="checkrow">
+          <input id="completed" type="checkbox" />
+          <label for="completed" style="margin:0;color:var(--text);">この話を完成扱いにする</label>
+        </div>
+        <div class="hint">保存は端末のローカル保存を使っています。同じブラウザ・同じ端末なら内容が残ります。</div>
+      </div>
+      <div class="footer-space"></div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'kaiki-plot-note-v2';
+
+    const homeView = document.getElementById('homeView');
+    const editorView = document.getElementById('editorView');
+    const episodeList = document.getElementById('episodeList');
+    const emptyState = document.getElementById('emptyState');
+    const editorTitle = document.getElementById('editorTitle');
+
+    const fields = {
+      episode: document.getElementById('episode'),
+      title: document.getElementById('title'),
+      setting: document.getElementById('setting'),
+      incident: document.getElementById('incident'),
+      monster: document.getElementById('monster'),
+      characters: document.getElementById('characters'),
+      status: document.getElementById('status'),
+      ending: document.getElementById('ending'),
+      aftertaste: document.getElementById('aftertaste'),
+      memo: document.getElementById('memo'),
+      completed: document.getElementById('completed')
+    };
+
+    const state = {
+      episodes: loadEpisodes(),
+      currentId: null,
+    };
+
+    function loadEpisodes() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveEpisodes() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.episodes));
+    }
+
+    function uid() {
+      return 'ep-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+    }
+
+    function previewText(ep) {
+      return ep.incident || ep.setting || ep.memo || 'まだ内容は入力されていません。';
+    }
+
+    function sortEpisodes(list) {
+      return [...list].sort((a, b) => {
+        const ae = Number(a.episode || 999999);
+        const be = Number(b.episode || 999999);
+        if (ae !== be) return ae - be;
+        return new Date(b.updatedAt) - new Date(a.updatedAt);
+      });
+    }
+
+    function renderList() {
+      const sorted = sortEpisodes(state.episodes);
+      episodeList.innerHTML = '';
+      emptyState.style.display = sorted.length ? 'none' : 'block';
+      sorted.forEach(ep => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-head">
+            <div class="ep">第${ep.episode || '未定'}話</div>
+            <div class="status ${ep.completed ? 'done' : ''}">${ep.completed ? '完成' : '未完成'}</div>
+          </div>
+          <h3>${escapeHtml(ep.title || 'タイトル未設定')}</h3>
+          <div class="preview">${escapeHtml(truncate(previewText(ep), 90))}</div>
+        `;
+        card.addEventListener('click', () => openEditor(ep.id));
+        episodeList.appendChild(card);
+      });
+    }
+
+    function truncate(text, max) {
+      return text.length > max ? text.slice(0, max) + '…' : text;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function showHome() {
+      homeView.classList.add('active');
+      editorView.classList.remove('active');
+      renderList();
+      state.currentId = null;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showEditor() {
+      homeView.classList.remove('active');
+      editorView.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function clearForm() {
+      Object.entries(fields).forEach(([key, el]) => {
+        if (key === 'completed') el.checked = false;
+        else el.value = '';
+      });
+    }
+
+    function fillForm(ep) {
+      fields.episode.value = ep.episode || '';
+      fields.title.value = ep.title || '';
+      fields.setting.value = ep.setting || '';
+      fields.incident.value = ep.incident || '';
+      fields.monster.value = ep.monster || '';
+      fields.characters.value = ep.characters || '';
+      fields.status.value = ep.status || '';
+      fields.ending.value = ep.ending || '';
+      fields.aftertaste.value = ep.aftertaste || '';
+      fields.memo.value = ep.memo || '';
+      fields.completed.checked = !!ep.completed;
+    }
+
+    function readForm() {
+      return {
+        episode: fields.episode.value ? Number(fields.episode.value) : '',
+        title: fields.title.value.trim(),
+        setting: fields.setting.value.trim(),
+        incident: fields.incident.value.trim(),
+        monster: fields.monster.value.trim(),
+        characters: fields.characters.value.trim(),
+        status: fields.status.value,
+        ending: fields.ending.value,
+        aftertaste: fields.aftertaste.value,
+        memo: fields.memo.value.trim(),
+        completed: fields.completed.checked,
+      };
+    }
+
+    function openEditor(id = null) {
+      if (!id) {
+        clearForm();
+        editorTitle.textContent = '新規エピソード';
+        state.currentId = null;
+      } else {
+        const ep = state.episodes.find(e => e.id === id);
+        if (!ep) return;
+        fillForm(ep);
+        editorTitle.textContent = `第${ep.episode || '未定'}話の編集`;
+        state.currentId = id;
+      }
+      showEditor();
+    }
+
+    function saveCurrent() {
+      const data = readForm();
+      const now = new Date().toISOString();
+      if (state.currentId) {
+        const idx = state.episodes.findIndex(e => e.id === state.currentId);
+        if (idx >= 0) {
+          state.episodes[idx] = { ...state.episodes[idx], ...data, updatedAt: now };
+        }
+      } else {
+        const entry = {
+          id: uid(),
+          ...data,
+          createdAt: now,
+          updatedAt: now,
+        };
+        state.episodes.push(entry);
+        state.currentId = entry.id;
+      }
+      saveEpisodes();
+      showHome();
+    }
+
+    function deleteCurrent() {
+      if (!state.currentId) { showHome(); return; }
+      const ok = confirm('このエピソードを削除しますか？');
+      if (!ok) return;
+      state.episodes = state.episodes.filter(e => e.id !== state.currentId);
+      saveEpisodes();
+      showHome();
+    }
+
+    document.getElementById('newBtn').addEventListener('click', () => openEditor());
+    document.getElementById('backBtn').addEventListener('click', showHome);
+    document.getElementById('saveBtn').addEventListener('click', saveCurrent);
+    document.getElementById('deleteBtn').addEventListener('click', deleteCurrent);
+
+    renderList();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
