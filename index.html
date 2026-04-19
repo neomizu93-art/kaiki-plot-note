@@ -2,400 +2,1329 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <meta name="theme-color" content="#0b1020" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="怪異プロット" />
   <title>怪異プロットノート</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
   <style>
     :root {
       --bg: #0b1020;
       --bg2: #121a31;
-      --card: rgba(255,255,255,0.08);
-      --card-border: rgba(255,255,255,0.12);
+      --card: #1c2542;
+      --card-2: #202b4b;
+      --border: rgba(255, 255, 255, 0.12);
       --text: #eef2ff;
       --muted: #b5bfdc;
       --accent: #8b9bff;
       --accent-2: #6e7ef0;
       --danger: #e86d7a;
       --success: #76d0a3;
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --warning: #f1c65b;
+      --shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
       --radius: 18px;
+      --radius-sm: 14px;
+      --input-bg: #091127;
+      --chip: #27345d;
     }
+
     * { box-sizing: border-box; }
-    html, body { margin:0; padding:0; background: linear-gradient(180deg, #070b16, #0b1020 30%, #121a31); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic UI",sans-serif; }
-    body { min-height:100vh; }
-    .app { max-width: 860px; margin: 0 auto; padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)); }
-    .topbar { display:flex; justify-content:space-between; align-items:flex-start; gap: 12px; margin-bottom: 18px; }
-    .title h1 { margin:0; font-size: 1.7rem; letter-spacing:.02em; }
-    .title p { margin:8px 0 0; color:var(--muted); font-size:.96rem; }
-    .btn {
-      border:none; border-radius: 14px; padding: 12px 16px; font-size: .98rem; font-weight: 700; cursor:pointer;
-      color:white; background: linear-gradient(180deg, var(--accent), var(--accent-2)); box-shadow: 0 8px 22px rgba(139,155,255,.35);
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #07101b 0%, #0b1020 30%, #121a31 100%);
+      color: var(--text);
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic",
+        "Noto Sans JP", sans-serif;
+      min-height: 100%;
     }
-    .btn.secondary { background: rgba(255,255,255,.08); color: var(--text); box-shadow:none; border:1px solid rgba(255,255,255,.14); }
-    .btn.danger { background: linear-gradient(180deg, #f08f98, var(--danger)); box-shadow:none; }
-    .home, .editor { display:none; }
-    .active { display:block; }
-    .empty {
-      background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); color: var(--muted);
+
+    body {
+      min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
+      padding-bottom: max(28px, env(safe-area-inset-bottom));
     }
-    .list { display:grid; gap: 12px; }
-    .card {
-      background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); cursor:pointer;
-      backdrop-filter: blur(10px);
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
     }
-    .card-head { display:flex; justify-content:space-between; gap:10px; align-items:center; }
-    .ep { font-size:.9rem; color: var(--accent); font-weight: 700; }
-    .status { font-size:.78rem; padding: 5px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.14); color: var(--muted); }
-    .status.done { color:#0b2016; background: var(--success); border-color: transparent; font-weight:700; }
-    .card h3 { margin: 10px 0 8px; font-size: 1.08rem; }
-    .preview { color:var(--muted); line-height:1.5; white-space: pre-wrap; }
-    .editor-card {
-      background: var(--card); border:1px solid var(--card-border); border-radius: 22px; padding: 16px; box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-    }
-    .editor-top { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 10px; }
-    .editor-top h2 { margin:0; font-size: 1.2rem; }
-    .toolbar { display:flex; gap:8px; flex-wrap:wrap; }
-    .grid { display:grid; gap: 14px; }
-    .two { grid-template-columns: 1fr 1fr; }
-    label { display:block; font-size:.92rem; color:var(--muted); margin-bottom: 6px; }
-    input[type="text"], input[type="number"], select, textarea {
-      width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.12); background: rgba(9,13,25,.72); color: var(--text); padding: 13px 14px; font-size: 16px;
+
+    input,
+    textarea,
+    select {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
       outline: none;
+      box-shadow: none;
+      position: relative;
+      z-index: 1;
     }
-    textarea { min-height: 110px; resize: vertical; line-height: 1.55; }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139,155,255,.18); }
-    .section-title { margin: 20px 0 10px; font-size: .95rem; color: #cdd5f6; letter-spacing: .03em; }
-    .checkrow { display:flex; align-items:center; gap:10px; padding: 12px 0 4px; }
-    .checkrow input { width: 20px; height: 20px; }
-    .hint { color: var(--muted); font-size: .84rem; margin-top: 12px; line-height: 1.55; }
-    .install-tip { margin-top: 14px; color: var(--muted); font-size: .84rem; line-height:1.55; }
-    .footer-space { height: 14px; }
-    @media (max-width: 680px) {
-      .topbar, .editor-top { flex-direction: column; align-items: stretch; }
-      .two { grid-template-columns: 1fr; }
-      .toolbar { width:100%; }
-      .toolbar .btn { flex:1; }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(139, 155, 255, 0.9);
+      box-shadow: 0 0 0 3px rgba(139, 155, 255, 0.18);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      padding:
+        max(18px, env(safe-area-inset-top))
+        16px
+        max(20px, env(safe-area-inset-bottom))
+        16px;
+    }
+
+    .panel {
+      background: rgba(28, 37, 66, 0.96);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 13px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      box-shadow: 0 10px 24px rgba(139, 155, 255, 0.28);
+      transition: transform 0.08s ease, opacity 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      box-shadow: none;
+      border: 1px solid var(--border);
+    }
+
+    .btn.danger {
+      background: linear-gradient(180deg, #f08a96, var(--danger));
+      box-shadow: 0 10px 24px rgba(232, 109, 122, 0.26);
+    }
+
+    .btn.success {
+      background: linear-gradient(180deg, #8ae0b3, var(--success));
+      color: #102217;
+      box-shadow: 0 10px 24px rgba(118, 208, 163, 0.22);
+    }
+
+    .section-label {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    .toolbar-panel {
+      margin-bottom: 16px;
+    }
+
+    .toolbar-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 0.8fr 0.8fr;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .storage-box {
+      margin-top: 16px;
+      background: rgba(9, 17, 39, 0.55);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .storage-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .storage-text {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: white;
+      background: var(--chip);
+      border: 1px solid var(--border);
+    }
+
+    .badge.warning { background: rgba(241, 198, 91, 0.18); color: #ffe7a1; }
+    .badge.danger { background: rgba(232, 109, 122, 0.18); color: #ffc6cc; }
+    .badge.ok { background: rgba(118, 208, 163, 0.18); color: #c8f5dc; }
+
+    .list {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .episode-card {
+      background: rgba(28, 37, 66, 0.96);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.08s ease, border-color 0.15s ease;
+    }
+
+    .episode-card:active {
+      transform: translateY(1px);
+    }
+
+    .episode-card:hover {
+      border-color: rgba(139, 155, 255, 0.5);
+    }
+
+    .episode-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .episode-top h3 {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.45;
+    }
+
+    .episode-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .chip {
+      background: var(--chip);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .episode-preview {
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty-state {
+      margin-top: 16px;
+      color: var(--muted);
+      background: rgba(28, 37, 66, 0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      line-height: 1.8;
+    }
+
+    .form-card {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .form-card.active {
+      display: block;
+    }
+
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .form-header h2 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .group-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--muted);
+      margin: 22px 0 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .hint {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-top: 7px;
+      line-height: 1.5;
+    }
+
+    .counter {
+      margin-top: 7px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .autosave-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(9, 17, 39, 0.55);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .image-box {
+      margin-top: 8px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.22);
+      background: rgba(9, 17, 39, 0.45);
+    }
+
+    .image-help {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .image-preview-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .image-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .image-item img {
+      display: block;
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      background: #040816;
+    }
+
+    .image-meta {
+      padding: 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .image-meta strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .image-remove {
+      width: 100%;
+      border: none;
+      border-top: 1px solid var(--border);
+      background: rgba(232, 109, 122, 0.12);
+      color: #ffd1d7;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+      color: var(--text);
+      flex-wrap: wrap;
+    }
+
+    .checkbox-row input {
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.65;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .notice {
+      margin-top: 14px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      border: 1px solid var(--border);
+    }
+
+    .notice.warning {
+      background: rgba(241, 198, 91, 0.12);
+      color: #ffe7a1;
+    }
+
+    .notice.danger {
+      background: rgba(232, 109, 122, 0.12);
+      color: #ffd3d8;
+    }
+
+    .notice.ok {
+      background: rgba(118, 208, 163, 0.12);
+      color: #d0f8e2;
+    }
+
+    @media (max-width: 860px) {
+      .toolbar-grid,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar,
+      .form-header {
+        flex-direction: column;
+      }
+
+      .actions,
+      .form-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .actions .btn,
+      .form-actions .btn {
+        flex: 1 1 auto;
+      }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <section id="homeView" class="home active">
+    <section id="homeView">
       <div class="topbar">
         <div class="title">
           <h1>怪異プロットノート</h1>
-          <p>各話のプロットを、項目ごとに整理して保存するためのシンプルなWebアプリ</p>
-          <div class="install-tip">Safariで公開URLを開いた状態なら、共有 →「ホーム画面に追加」で置きやすい構成です。</div>
+          <p>
+            各話のプロットを、項目ごとに整理して保存するためのシンプルなWebアプリ<br>
+            Safariで公開URLを開いた状態なら、共有 → ホーム画面に追加で置きやすい構成です。
+          </p>
         </div>
-        <button id="newBtn" class="btn">＋ 新規作成</button>
+        <div class="actions">
+          <button class="btn secondary" id="exportBtn">バックアップ書き出し</button>
+          <button class="btn secondary" id="importBtn">バックアップ読み込み</button>
+          <button class="btn" id="createBtn">＋ 新規作成</button>
+          <input type="file" id="importFile" accept="application/json" class="hidden" />
+        </div>
       </div>
+
+      <div class="panel toolbar-panel">
+        <div class="toolbar-grid">
+          <div>
+            <p class="section-label">検索</p>
+            <input id="searchInput" type="text" placeholder="タイトル・舞台・怪異・登場人物・タグを検索" />
+          </div>
+          <div>
+            <p class="section-label">カテゴリ</p>
+            <select id="categoryFilter">
+              <option value="">すべて</option>
+            </select>
+          </div>
+          <div>
+            <p class="section-label">並び替え</p>
+            <select id="sortSelect">
+              <option value="episode-asc">話数が小さい順</option>
+              <option value="episode-desc">話数が大きい順</option>
+              <option value="updated-desc">更新が新しい順</option>
+              <option value="updated-asc">更新が古い順</option>
+              <option value="title-asc">タイトル昇順</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="storage-box">
+          <div class="storage-row">
+            <div class="storage-text">
+              <strong>保存容量の目安</strong><br>
+              <span id="storageText">計算中…</span>
+            </div>
+            <div id="storageBadge" class="badge ok">通常</div>
+          </div>
+          <div id="storageNotice" class="notice warning hidden"></div>
+        </div>
+      </div>
+
       <div id="episodeList" class="list"></div>
-      <div id="emptyState" class="empty" style="display:none;">
-        まだエピソードがありません。<br>右上の「＋ 新規作成」から最初の1話を作れます。
+      <div id="emptyState" class="empty-state hidden">
+        まだエピソードがありません。<br>
+        右上の「＋ 新規作成」から最初の1話を作れます。
       </div>
     </section>
 
-    <section id="editorView" class="editor">
-      <div class="editor-card">
-        <div class="editor-top">
-          <h2 id="editorTitle">新規エピソード</h2>
-          <div class="toolbar">
-            <button id="backBtn" class="btn secondary">一覧へ戻る</button>
-            <button id="saveBtn" class="btn">保存</button>
-            <button id="deleteBtn" class="btn danger">削除</button>
-          </div>
+    <section id="formView" class="panel form-card">
+      <div class="form-header">
+        <div>
+          <h2 id="formTitle">新規エピソード</h2>
         </div>
-
-        <div class="section-title">基本情報</div>
-        <div class="grid two">
-          <div>
-            <label for="episode">話数</label>
-            <input id="episode" type="number" inputmode="numeric" min="1" placeholder="例：1" />
-          </div>
-          <div>
-            <label for="title">タイトル</label>
-            <input id="title" type="text" placeholder="例：第1話「水眠」" />
-          </div>
+        <div class="form-actions">
+          <button class="btn secondary" id="backBtn">一覧へ戻る</button>
+          <button class="btn" id="saveBtn">保存</button>
+          <button class="btn danger" id="deleteBtn">削除</button>
         </div>
-
-        <div class="section-title">ストーリー設計</div>
-        <div class="grid">
-          <div>
-            <label for="setting">基本舞台</label>
-            <textarea id="setting" placeholder="どこで起きる話か"></textarea>
-          </div>
-          <div>
-            <label for="incident">起きる異変</label>
-            <textarea id="incident" placeholder="何が起きるか"></textarea>
-          </div>
-          <div>
-            <label for="monster">怪異の正体</label>
-            <textarea id="monster" placeholder="怪異の真相・正体・裏設定"></textarea>
-          </div>
-          <div>
-            <label for="characters">登場人物</label>
-            <textarea id="characters" placeholder="主人公、脇役、怪異に関わる人物など"></textarea>
-          </div>
-        </div>
-
-        <div class="section-title">展開・結末</div>
-        <div class="grid two">
-          <div>
-            <label for="status">主人公の安否</label>
-            <select id="status">
-              <option value="">選択してください</option>
-              <option value="無事">無事</option>
-              <option value="たぶん無事">たぶん無事</option>
-              <option value="不明">不明</option>
-              <option value="死亡">死亡</option>
-            </select>
-          </div>
-          <div>
-            <label for="ending">結末の見せ方</label>
-            <select id="ending">
-              <option value="">選択してください</option>
-              <option value="明示">明示</option>
-              <option value="ぼかす">ぼかす</option>
-              <option value="視聴者に委ねる">視聴者に委ねる</option>
-            </select>
-          </div>
-          <div>
-            <label for="aftertaste">後味</label>
-            <select id="aftertaste">
-              <option value="">選択してください</option>
-              <option value="不安">不安</option>
-              <option value="恐怖">恐怖</option>
-              <option value="美しさ">美しさ</option>
-              <option value="安堵">安堵</option>
-              <option value="疑問">疑問</option>
-              <option value="余韻">余韻</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="section-title">補助</div>
-        <div class="grid">
-          <div>
-            <label for="memo">メモ</label>
-            <textarea id="memo" placeholder="自由メモ、未確定要素、後で直したいこと"></textarea>
-          </div>
-        </div>
-
-        <div class="checkrow">
-          <input id="completed" type="checkbox" />
-          <label for="completed" style="margin:0;color:var(--text);">この話を完成扱いにする</label>
-        </div>
-        <div class="hint">保存は端末のローカル保存を使っています。同じブラウザ・同じ端末なら内容が残ります。</div>
       </div>
-      <div class="footer-space"></div>
+
+      <div class="group-title">基本情報</div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="episodeNumber">話数</label>
+          <input id="episodeNumber" type="number" inputmode="numeric" placeholder="例：1" />
+          <div class="hint">数字だけでもOKです。</div>
+        </div>
+        <div class="field">
+          <label for="title">タイトル</label>
+          <input id="title" type="text" placeholder="例：第1話『水眠』" />
+          <div class="counter"><span id="count-title">0</span>文字</div>
+        </div>
+      </div>
+
+      <div class="group-title">分類</div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="category">カテゴリ</label>
+          <input id="category" type="text" placeholder="例：日常怪異 / K.P.E / 短編ホラー" />
+          <div class="counter"><span id="count-category">0</span>文字</div>
+        </div>
+        <div class="field">
+          <label for="tags">タグ</label>
+          <input id="tags" type="text" placeholder="例：追跡, ぼかしエンド, POV（カンマ区切り）" />
+          <div class="hint">「,」または「、」区切りで入力できます。</div>
+          <div class="counter"><span id="count-tags">0</span>文字</div>
+        </div>
+      </div>
+
+      <div class="group-title">ストーリー設計</div>
+
+      <div class="field">
+        <label for="setting">基本舞台</label>
+        <textarea id="setting" placeholder="どこで起きる話か"></textarea>
+        <div class="counter"><span id="count-setting">0</span>文字</div>
+      </div>
+
+      <div class="field">
+        <label for="incident">起きる異変</label>
+        <textarea id="incident" placeholder="何が起きるか"></textarea>
+        <div class="counter"><span id="count-incident">0</span>文字</div>
+      </div>
+
+      <div class="field">
+        <label for="monster">怪異の正体</label>
+        <textarea id="monster" placeholder="怪異の真相・正体・裏設定"></textarea>
+        <div class="counter"><span id="count-monster">0</span>文字</div>
+      </div>
+
+      <div class="field">
+        <label for="characters">登場人物</label>
+        <textarea id="characters" placeholder="主人公、脇役、怪異に関わる人物など"></textarea>
+        <div class="counter"><span id="count-characters">0</span>文字</div>
+      </div>
+
+      <div class="group-title">展開・結末</div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="protagonistStatus">主人公の安否</label>
+          <select id="protagonistStatus">
+            <option value="">選択してください</option>
+            <option value="無事">無事</option>
+            <option value="たぶん無事">たぶん無事</option>
+            <option value="不明">不明</option>
+            <option value="死亡">死亡</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="endingType">結末の見せ方</label>
+          <select id="endingType">
+            <option value="">選択してください</option>
+            <option value="明示">明示</option>
+            <option value="ぼかす">ぼかす</option>
+            <option value="視聴者に委ねる">視聴者に委ねる</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="aftertaste">後味</label>
+          <select id="aftertaste">
+            <option value="">選択してください</option>
+            <option value="不安">不安</option>
+            <option value="恐怖">恐怖</option>
+            <option value="美しさ">美しさ</option>
+            <option value="安堵">安堵</option>
+            <option value="疑問">疑問</option>
+            <option value="余韻">余韻</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="group-title">補助</div>
+      <div class="field">
+        <label for="memo">メモ</label>
+        <textarea id="memo" placeholder="自由メモ、未確定要素、後で直したいこと"></textarea>
+        <div class="counter"><span id="count-memo">0</span>文字</div>
+      </div>
+
+      <div class="field">
+        <label for="imageInput">画像添付</label>
+        <div class="image-box">
+          <div class="image-help">
+            プロット補助用の画像を添付できます。端末内保存なので便利ですが、画像が増えるほど保存容量を使います。<br>
+            大きい画像は自動で縮小して保存します。
+          </div>
+          <input id="imageInput" type="file" accept="image/*" multiple />
+          <div id="imagePreviewGrid" class="image-preview-grid"></div>
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input id="isCompleted" type="checkbox" />
+        <label for="isCompleted">この話を完成扱いにする</label>
+      </div>
+
+      <div class="autosave-box">
+        <div>オート保存</div>
+        <div id="autosaveStatus">未保存</div>
+      </div>
+
+      <div id="formNotice" class="notice hidden"></div>
+
+      <div class="footer-note">
+        保存は端末のローカル保存を使っています。同じブラウザ・同じ端末なら内容が残ります。
+      </div>
     </section>
   </div>
 
   <script>
-    const STORAGE_KEY = 'kaiki-plot-note-v2';
+    const STORAGE_KEY = "kaiki_plot_note_v2";
+    const AUTOSAVE_KEY = "kaiki_plot_note_v2_draft";
+    const MAX_SAFE_STORAGE = 4.5 * 1024 * 1024;
 
-    const homeView = document.getElementById('homeView');
-    const editorView = document.getElementById('editorView');
-    const episodeList = document.getElementById('episodeList');
-    const emptyState = document.getElementById('emptyState');
-    const editorTitle = document.getElementById('editorTitle');
+    let episodes = [];
+    let editingId = null;
+    let autosaveTimer = null;
+    let currentImages = [];
 
-    const fields = {
-      episode: document.getElementById('episode'),
-      title: document.getElementById('title'),
-      setting: document.getElementById('setting'),
-      incident: document.getElementById('incident'),
-      monster: document.getElementById('monster'),
-      characters: document.getElementById('characters'),
-      status: document.getElementById('status'),
-      ending: document.getElementById('ending'),
-      aftertaste: document.getElementById('aftertaste'),
-      memo: document.getElementById('memo'),
-      completed: document.getElementById('completed')
+    const els = {
+      homeView: document.getElementById("homeView"),
+      formView: document.getElementById("formView"),
+      episodeList: document.getElementById("episodeList"),
+      emptyState: document.getElementById("emptyState"),
+      createBtn: document.getElementById("createBtn"),
+      backBtn: document.getElementById("backBtn"),
+      saveBtn: document.getElementById("saveBtn"),
+      deleteBtn: document.getElementById("deleteBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      importBtn: document.getElementById("importBtn"),
+      importFile: document.getElementById("importFile"),
+      searchInput: document.getElementById("searchInput"),
+      categoryFilter: document.getElementById("categoryFilter"),
+      sortSelect: document.getElementById("sortSelect"),
+      storageText: document.getElementById("storageText"),
+      storageBadge: document.getElementById("storageBadge"),
+      storageNotice: document.getElementById("storageNotice"),
+      formTitle: document.getElementById("formTitle"),
+      formNotice: document.getElementById("formNotice"),
+      autosaveStatus: document.getElementById("autosaveStatus"),
+
+      episodeNumber: document.getElementById("episodeNumber"),
+      title: document.getElementById("title"),
+      category: document.getElementById("category"),
+      tags: document.getElementById("tags"),
+      setting: document.getElementById("setting"),
+      incident: document.getElementById("incident"),
+      monster: document.getElementById("monster"),
+      characters: document.getElementById("characters"),
+      protagonistStatus: document.getElementById("protagonistStatus"),
+      endingType: document.getElementById("endingType"),
+      aftertaste: document.getElementById("aftertaste"),
+      memo: document.getElementById("memo"),
+      isCompleted: document.getElementById("isCompleted"),
+      imageInput: document.getElementById("imageInput"),
+      imagePreviewGrid: document.getElementById("imagePreviewGrid"),
+
+      countTitle: document.getElementById("count-title"),
+      countCategory: document.getElementById("count-category"),
+      countTags: document.getElementById("count-tags"),
+      countSetting: document.getElementById("count-setting"),
+      countIncident: document.getElementById("count-incident"),
+      countMonster: document.getElementById("count-monster"),
+      countCharacters: document.getElementById("count-characters"),
+      countMemo: document.getElementById("count-memo"),
     };
 
-    const state = {
-      episodes: loadEpisodes(),
-      currentId: null,
-    };
+    function uid() {
+      return "ep_" + Date.now() + "_" + Math.random().toString(36).slice(2, 9);
+    }
 
-    function loadEpisodes() {
+    function safeParse(json, fallback) {
       try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        return JSON.parse(json) ?? fallback;
       } catch {
-        return [];
+        return fallback;
       }
     }
 
-    function saveEpisodes() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.episodes));
+    function loadEpisodes() {
+      episodes = safeParse(localStorage.getItem(STORAGE_KEY), []);
+      if (!Array.isArray(episodes)) episodes = [];
     }
 
-    function uid() {
-      return 'ep-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+    function saveEpisodes() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(episodes));
+      updateStorageInfo();
+      renderList();
+    }
+
+    function showNotice(type, text) {
+      els.formNotice.className = "notice " + type;
+      els.formNotice.textContent = text;
+      els.formNotice.classList.remove("hidden");
+    }
+
+    function hideNotice() {
+      els.formNotice.classList.add("hidden");
+      els.formNotice.textContent = "";
+      els.formNotice.className = "notice hidden";
+    }
+
+    function textCount(v) {
+      return (v || "").length;
+    }
+
+    function updateCounters() {
+      els.countTitle.textContent = textCount(els.title.value);
+      els.countCategory.textContent = textCount(els.category.value);
+      els.countTags.textContent = textCount(els.tags.value);
+      els.countSetting.textContent = textCount(els.setting.value);
+      els.countIncident.textContent = textCount(els.incident.value);
+      els.countMonster.textContent = textCount(els.monster.value);
+      els.countCharacters.textContent = textCount(els.characters.value);
+      els.countMemo.textContent = textCount(els.memo.value);
+    }
+
+    function normalizeTags(raw) {
+      return (raw || "")
+        .split(/[,、]/)
+        .map(v => v.trim())
+        .filter(Boolean);
+    }
+
+    function collectFormData() {
+      return {
+        id: editingId || uid(),
+        episode: els.episodeNumber.value ? Number(els.episodeNumber.value) : null,
+        title: els.title.value.trim(),
+        category: els.category.value.trim(),
+        tags: normalizeTags(els.tags.value),
+        setting: els.setting.value.trim(),
+        incident: els.incident.value.trim(),
+        monster: els.monster.value.trim(),
+        characters: els.characters.value.trim(),
+        protagonistStatus: els.protagonistStatus.value,
+        endingType: els.endingType.value,
+        aftertaste: els.aftertaste.value,
+        memo: els.memo.value.trim(),
+        isCompleted: els.isCompleted.checked,
+        images: currentImages,
+        updatedAt: new Date().toISOString(),
+      };
+    }
+
+    function fillForm(data) {
+      editingId = data?.id || null;
+      els.episodeNumber.value = data?.episode ?? "";
+      els.title.value = data?.title ?? "";
+      els.category.value = data?.category ?? "";
+      els.tags.value = (data?.tags || []).join(", ");
+      els.setting.value = data?.setting ?? "";
+      els.incident.value = data?.incident ?? "";
+      els.monster.value = data?.monster ?? "";
+      els.characters.value = data?.characters ?? "";
+      els.protagonistStatus.value = data?.protagonistStatus ?? "";
+      els.endingType.value = data?.endingType ?? "";
+      els.aftertaste.value = data?.aftertaste ?? "";
+      els.memo.value = data?.memo ?? "";
+      els.isCompleted.checked = Boolean(data?.isCompleted);
+      currentImages = Array.isArray(data?.images) ? data.images : [];
+      renderImages();
+      updateCounters();
+    }
+
+    function clearForm() {
+      fillForm({});
+      hideNotice();
+      updateAutosaveStatus("未保存");
+      localStorage.removeItem(AUTOSAVE_KEY);
+    }
+
+    function openForm(data = null) {
+      els.homeView.classList.add("hidden");
+      els.formView.classList.add("active");
+      els.formTitle.textContent = data ? "エピソード編集" : "新規エピソード";
+      fillForm(data);
+      els.deleteBtn.style.display = data ? "inline-block" : "inline-block";
+      setTimeout(() => els.episodeNumber.focus(), 50);
+    }
+
+    function closeForm() {
+      els.formView.classList.remove("active");
+      els.homeView.classList.remove("hidden");
+      hideNotice();
     }
 
     function previewText(ep) {
-      return ep.incident || ep.setting || ep.memo || 'まだ内容は入力されていません。';
+      const parts = [
+        ep.setting,
+        ep.incident,
+        ep.monster,
+        ep.characters,
+        ep.memo,
+      ].filter(Boolean);
+      return parts.join(" / ").slice(0, 180) || "まだ内容が入力されていません。";
     }
 
-    function sortEpisodes(list) {
-      return [...list].sort((a, b) => {
-        const ae = Number(a.episode || 999999);
-        const be = Number(b.episode || 999999);
-        if (ae !== be) return ae - be;
-        return new Date(b.updatedAt) - new Date(a.updatedAt);
+    function filteredEpisodes() {
+      const q = els.searchInput.value.trim().toLowerCase();
+      const category = els.categoryFilter.value;
+      const sort = els.sortSelect.value;
+
+      let list = [...episodes];
+
+      if (category) {
+        list = list.filter(ep => (ep.category || "") === category);
+      }
+
+      if (q) {
+        list = list.filter(ep => {
+          const text = [
+            ep.title,
+            ep.category,
+            ...(ep.tags || []),
+            ep.setting,
+            ep.incident,
+            ep.monster,
+            ep.characters,
+            ep.memo,
+          ]
+            .join(" ")
+            .toLowerCase();
+          return text.includes(q);
+        });
+      }
+
+      list.sort((a, b) => {
+        switch (sort) {
+          case "episode-desc":
+            return (b.episode ?? 999999) - (a.episode ?? 999999);
+          case "updated-desc":
+            return new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0);
+          case "updated-asc":
+            return new Date(a.updatedAt || 0) - new Date(b.updatedAt || 0);
+          case "title-asc":
+            return (a.title || "").localeCompare(b.title || "", "ja");
+          case "episode-asc":
+          default:
+            return (a.episode ?? 999999) - (b.episode ?? 999999);
+        }
       });
+
+      return list;
+    }
+
+    function renderCategoryOptions() {
+      const current = els.categoryFilter.value;
+      const categories = [...new Set(episodes.map(ep => ep.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ja"));
+      els.categoryFilter.innerHTML = `<option value="">すべて</option>` +
+        categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+      if ([...els.categoryFilter.options].some(o => o.value === current)) {
+        els.categoryFilter.value = current;
+      }
     }
 
     function renderList() {
-      const sorted = sortEpisodes(state.episodes);
-      episodeList.innerHTML = '';
-      emptyState.style.display = sorted.length ? 'none' : 'block';
-      sorted.forEach(ep => {
-        const card = document.createElement('div');
-        card.className = 'card';
+      renderCategoryOptions();
+      const list = filteredEpisodes();
+      els.episodeList.innerHTML = "";
+
+      if (!list.length) {
+        els.emptyState.classList.remove("hidden");
+        return;
+      }
+
+      els.emptyState.classList.add("hidden");
+
+      list.forEach(ep => {
+        const card = document.createElement("article");
+        card.className = "episode-card";
         card.innerHTML = `
-          <div class="card-head">
-            <div class="ep">第${ep.episode || '未定'}話</div>
-            <div class="status ${ep.completed ? 'done' : ''}">${ep.completed ? '完成' : '未完成'}</div>
+          <div class="episode-top">
+            <div>
+              <h3>${ep.episode ? `第${escapeHtml(String(ep.episode))}話 ` : ""}${escapeHtml(ep.title || "無題")}</h3>
+              <div class="episode-meta">
+                ${ep.isCompleted ? `<span class="chip">完成</span>` : `<span class="chip">未完成</span>`}
+                ${ep.category ? `<span class="chip">${escapeHtml(ep.category)}</span>` : ""}
+                ${ep.aftertaste ? `<span class="chip">${escapeHtml(ep.aftertaste)}</span>` : ""}
+                ${ep.images?.length ? `<span class="chip">画像 ${ep.images.length}枚</span>` : ""}
+              </div>
+            </div>
+            <div class="chip">${formatDate(ep.updatedAt)}</div>
           </div>
-          <h3>${escapeHtml(ep.title || 'タイトル未設定')}</h3>
-          <div class="preview">${escapeHtml(truncate(previewText(ep), 90))}</div>
+          <div class="episode-preview">${escapeHtml(previewText(ep))}</div>
+          ${(ep.tags || []).length ? `<div class="episode-meta" style="margin-top:12px;">${ep.tags.map(t => `<span class="chip">${escapeHtml(t)}</span>`).join("")}</div>` : ""}
         `;
-        card.addEventListener('click', () => openEditor(ep.id));
-        episodeList.appendChild(card);
+        card.addEventListener("click", () => openForm(ep));
+        els.episodeList.appendChild(card);
       });
     }
 
-    function truncate(text, max) {
-      return text.length > max ? text.slice(0, max) + '…' : text;
+    function formatDate(v) {
+      if (!v) return "未保存";
+      const d = new Date(v);
+      if (Number.isNaN(d.getTime())) return "未保存";
+      return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
     }
 
     function escapeHtml(str) {
       return String(str)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
-    function showHome() {
-      homeView.classList.add('active');
-      editorView.classList.remove('active');
-      renderList();
-      state.currentId = null;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function updateAutosaveStatus(text) {
+      els.autosaveStatus.textContent = text;
     }
 
-    function showEditor() {
-      homeView.classList.remove('active');
-      editorView.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function saveDraft() {
+      const draft = collectFormData();
+      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(draft));
+      updateAutosaveStatus("オート保存済み");
+      updateStorageInfo();
     }
 
-    function clearForm() {
-      Object.entries(fields).forEach(([key, el]) => {
-        if (key === 'completed') el.checked = false;
-        else el.value = '';
-      });
+    function scheduleAutosave() {
+      updateAutosaveStatus("編集中…");
+      clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(saveDraft, 800);
     }
 
-    function fillForm(ep) {
-      fields.episode.value = ep.episode || '';
-      fields.title.value = ep.title || '';
-      fields.setting.value = ep.setting || '';
-      fields.incident.value = ep.incident || '';
-      fields.monster.value = ep.monster || '';
-      fields.characters.value = ep.characters || '';
-      fields.status.value = ep.status || '';
-      fields.ending.value = ep.ending || '';
-      fields.aftertaste.value = ep.aftertaste || '';
-      fields.memo.value = ep.memo || '';
-      fields.completed.checked = !!ep.completed;
+    function restoreDraftIfAny() {
+      const draft = safeParse(localStorage.getItem(AUTOSAVE_KEY), null);
+      if (draft && !editingId) {
+        fillForm(draft);
+        updateAutosaveStatus("前回の下書きを復元しました");
+      }
     }
 
-    function readForm() {
-      return {
-        episode: fields.episode.value ? Number(fields.episode.value) : '',
-        title: fields.title.value.trim(),
-        setting: fields.setting.value.trim(),
-        incident: fields.incident.value.trim(),
-        monster: fields.monster.value.trim(),
-        characters: fields.characters.value.trim(),
-        status: fields.status.value,
-        ending: fields.ending.value,
-        aftertaste: fields.aftertaste.value,
-        memo: fields.memo.value.trim(),
-        completed: fields.completed.checked,
-      };
-    }
-
-    function openEditor(id = null) {
-      if (!id) {
+    function deleteCurrentEpisode() {
+      if (!editingId) {
         clearForm();
-        editorTitle.textContent = '新規エピソード';
-        state.currentId = null;
-      } else {
-        const ep = state.episodes.find(e => e.id === id);
-        if (!ep) return;
-        fillForm(ep);
-        editorTitle.textContent = `第${ep.episode || '未定'}話の編集`;
-        state.currentId = id;
+        closeForm();
+        return;
       }
-      showEditor();
+
+      const target = episodes.find(ep => ep.id === editingId);
+      const label = target?.title ? `「${target.title}」` : "このエピソード";
+      if (!confirm(`${label}を削除しますか？`)) return;
+
+      episodes = episodes.filter(ep => ep.id !== editingId);
+      saveEpisodes();
+      localStorage.removeItem(AUTOSAVE_KEY);
+      editingId = null;
+      clearForm();
+      closeForm();
     }
 
-    function saveCurrent() {
-      const data = readForm();
-      const now = new Date().toISOString();
-      if (state.currentId) {
-        const idx = state.episodes.findIndex(e => e.id === state.currentId);
-        if (idx >= 0) {
-          state.episodes[idx] = { ...state.episodes[idx], ...data, updatedAt: now };
-        }
+    function saveCurrentEpisode() {
+      hideNotice();
+      const data = collectFormData();
+
+      if (!data.title && !data.setting && !data.incident && !data.monster && !data.characters && !data.memo) {
+        showNotice("warning", "まだほとんど内容が入っていません。最低1項目は入力してから保存するのがおすすめです。");
+      }
+
+      const existingIndex = episodes.findIndex(ep => ep.id === data.id);
+      const preservedCreatedAt = existingIndex >= 0 ? episodes[existingIndex].createdAt : new Date().toISOString();
+      data.createdAt = preservedCreatedAt;
+
+      if (existingIndex >= 0) {
+        episodes[existingIndex] = data;
       } else {
-        const entry = {
-          id: uid(),
-          ...data,
-          createdAt: now,
-          updatedAt: now,
+        episodes.push(data);
+      }
+
+      editingId = data.id;
+      saveEpisodes();
+      localStorage.removeItem(AUTOSAVE_KEY);
+      updateAutosaveStatus("保存済み");
+      closeForm();
+    }
+
+    async function resizeImage(file, maxSize = 1400, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = reject;
+          img.onload = () => {
+            let { width, height } = img;
+            const ratio = Math.min(1, maxSize / Math.max(width, height));
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            let dataUrl = canvas.toDataURL("image/jpeg", quality);
+            resolve({
+              id: uid(),
+              name: file.name,
+              type: "image/jpeg",
+              size: dataUrl.length,
+              dataUrl,
+              width,
+              height,
+            });
+          };
+          img.src = reader.result;
         };
-        state.episodes.push(entry);
-        state.currentId = entry.id;
-      }
-      saveEpisodes();
-      showHome();
-    }
-
-    function deleteCurrent() {
-      if (!state.currentId) { showHome(); return; }
-      const ok = confirm('このエピソードを削除しますか？');
-      if (!ok) return;
-      state.episodes = state.episodes.filter(e => e.id !== state.currentId);
-      saveEpisodes();
-      showHome();
-    }
-
-    document.getElementById('newBtn').addEventListener('click', () => openEditor());
-    document.getElementById('backBtn').addEventListener('click', showHome);
-    document.getElementById('saveBtn').addEventListener('click', saveCurrent);
-    document.getElementById('deleteBtn').addEventListener('click', deleteCurrent);
-
-    renderList();
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        reader.readAsDataURL(file);
       });
     }
+
+    async function handleImageFiles(files) {
+      if (!files?.length) return;
+      hideNotice();
+
+      for (const file of files) {
+        try {
+          const item = await resizeImage(file);
+          currentImages.push(item);
+        } catch (err) {
+          console.error(err);
+          showNotice("danger", `画像「${file.name}」の読み込みに失敗しました。`);
+        }
+      }
+
+      renderImages();
+      scheduleAutosave();
+      updateStorageInfo();
+      els.imageInput.value = "";
+    }
+
+    function renderImages() {
+      els.imagePreviewGrid.innerHTML = "";
+      currentImages.forEach(img => {
+        const el = document.createElement("div");
+        el.className = "image-item";
+        el.innerHTML = `
+          <img src="${img.dataUrl}" alt="${escapeHtml(img.name)}">
+          <div class="image-meta">
+            <strong>${escapeHtml(img.name)}</strong>
+            ${img.width}×${img.height}<br>
+            約${formatBytes(img.size)}
+          </div>
+          <button type="button" class="image-remove">削除</button>
+        `;
+        el.querySelector(".image-remove").addEventListener("click", () => {
+          currentImages = currentImages.filter(v => v.id !== img.id);
+          renderImages();
+          scheduleAutosave();
+          updateStorageInfo();
+        });
+        els.imagePreviewGrid.appendChild(el);
+      });
+    }
+
+    function estimateStorageBytes() {
+      const episodesJson = JSON.stringify(episodes);
+      const draftJson = localStorage.getItem(AUTOSAVE_KEY) || "";
+      return episodesJson.length + draftJson.length;
+    }
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
+    function updateStorageInfo() {
+      const bytes = estimateStorageBytes();
+      const ratio = bytes / MAX_SAFE_STORAGE;
+
+      els.storageText.textContent = `${formatBytes(bytes)} 使用中 / 目安 ${formatBytes(MAX_SAFE_STORAGE)}`;
+
+      els.storageNotice.classList.add("hidden");
+      els.storageNotice.textContent = "";
+
+      if (ratio >= 0.9) {
+        els.storageBadge.textContent = "危険";
+        els.storageBadge.className = "badge danger";
+        els.storageNotice.textContent = "保存容量がかなり多くなっています。画像を減らすか、バックアップを書き出して整理してください。";
+        els.storageNotice.className = "notice danger";
+        els.storageNotice.classList.remove("hidden");
+      } else if (ratio >= 0.7) {
+        els.storageBadge.textContent = "注意";
+        els.storageBadge.className = "badge warning";
+        els.storageNotice.textContent = "保存容量が増えてきています。今のうちにバックアップ書き出しをしておくと安心です。";
+        els.storageNotice.className = "notice warning";
+        els.storageNotice.classList.remove("hidden");
+      } else {
+        els.storageBadge.textContent = "通常";
+        els.storageBadge.className = "badge ok";
+      }
+    }
+
+    function exportBackup() {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        app: "kaiki_plot_note_v2",
+        episodes,
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `kaiki_plot_note_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importBackupFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const json = JSON.parse(reader.result);
+          if (!json || !Array.isArray(json.episodes)) {
+            alert("バックアップ形式が正しくありません。");
+            return;
+          }
+          if (!confirm("現在のデータをバックアップ内容で置き換えますか？")) return;
+          episodes = json.episodes;
+          saveEpisodes();
+          alert("バックアップを読み込みました。");
+        } catch {
+          alert("バックアップの読み込みに失敗しました。");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function bindLiveCounter(id, counterEl) {
+      id.addEventListener("input", () => {
+        counterEl.textContent = textCount(id.value);
+        scheduleAutosave();
+      });
+    }
+
+    function registerServiceWorker() {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js").catch(console.error);
+      }
+    }
+
+    function initEvents() {
+      els.createBtn.addEventListener("click", () => {
+        editingId = null;
+        clearForm();
+        openForm();
+        restoreDraftIfAny();
+      });
+
+      els.backBtn.addEventListener("click", () => closeForm());
+      els.saveBtn.addEventListener("click", saveCurrentEpisode);
+      els.deleteBtn.addEventListener("click", deleteCurrentEpisode);
+
+      els.exportBtn.addEventListener("click", exportBackup);
+      els.importBtn.addEventListener("click", () => els.importFile.click());
+      els.importFile.addEventListener("change", (e) => {
+        const file = e.target.files?.[0];
+        if (file) importBackupFile(file);
+        e.target.value = "";
+      });
+
+      els.searchInput.addEventListener("input", renderList);
+      els.categoryFilter.addEventListener("change", renderList);
+      els.sortSelect.addEventListener("change", renderList);
+
+      [
+        els.episodeNumber,
+        els.protagonistStatus,
+        els.endingType,
+        els.aftertaste,
+        els.isCompleted,
+        els.category,
+        els.tags
+      ].forEach(el => el.addEventListener("change", scheduleAutosave));
+
+      bindLiveCounter(els.title, els.countTitle);
+      bindLiveCounter(els.category, els.countCategory);
+      bindLiveCounter(els.tags, els.countTags);
+      bindLiveCounter(els.setting, els.countSetting);
+      bindLiveCounter(els.incident, els.countIncident);
+      bindLiveCounter(els.monster, els.countMonster);
+      bindLiveCounter(els.characters, els.countCharacters);
+      bindLiveCounter(els.memo, els.countMemo);
+
+      els.imageInput.addEventListener("change", e => handleImageFiles([...e.target.files]));
+
+      els.episodeNumber.addEventListener("input", scheduleAutosave);
+      els.protagonistStatus.addEventListener("change", scheduleAutosave);
+      els.endingType.addEventListener("change", scheduleAutosave);
+      els.aftertaste.addEventListener("change", scheduleAutosave);
+      els.isCompleted.addEventListener("change", scheduleAutosave);
+    }
+
+    function init() {
+      loadEpisodes();
+      updateStorageInfo();
+      renderList();
+      updateCounters();
+      initEvents();
+      registerServiceWorker();
+    }
+
+    init();
   </script>
 </body>
 </html>
